@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { IRegisterCreds, IUser } from '../../types/user';
 import { tap } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -9,8 +10,7 @@ import { tap } from 'rxjs';
 export class AccountServices {
   private http = inject(HttpClient);
   currentUser = signal<IUser | null>(null);
-
-  baseUrl = 'https://localhost:5001/api/';
+  private baseUrl = environment.apiUrl;
 
   register(creds: IRegisterCreds) {
     return this.http.post<IUser>(this.baseUrl + 'account/register', creds).pipe(
