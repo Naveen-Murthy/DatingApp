@@ -3,7 +3,7 @@
     <p><span class="font-semibold">Member since:</span> {{ member.created | date: 'longDate' }}</p>
     <p>
       <span class="font-semibold">Last Active:</span>
-      {{ member.lastActive | date: 'dd MM yyyy h:mm:ss' }}
+      {{ member.lastActive | timeAgo }}
     </p>
     <h3 class="text-lg font-semibold text-primary">About {{ member.displayName }}</h3>
     @if (memberService.editMode()) {
