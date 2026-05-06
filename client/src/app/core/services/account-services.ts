@@ -3,12 +3,14 @@ import { inject, Injectable, signal } from '@angular/core';
 import { IRegisterCreds, IUser } from '../../types/user';
 import { tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { LikesService } from './likes-service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AccountServices {
   private http = inject(HttpClient);
+  private likesService = inject(LikesService);
   currentUser = signal<IUser | null>(null);
   private baseUrl = environment.apiUrl;
 
@@ -33,11 +35,13 @@ export class AccountServices {
   setCurrentUser(user: IUser) {
     localStorage.setItem('user', JSON.stringify(user));
     this.currentUser.set(user);
+    this.likesService.getLikesIds();
   }
 
   logout() {
     localStorage.removeItem('user');
     localStorage.removeItem('filters');
     this.currentUser.set(null);
+    this.likesService.clearLikeIds();
   }
 }
