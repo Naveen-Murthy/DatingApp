@@ -13,6 +13,7 @@ export interface IUser {
   email: string;
   token: string;
   imageUrl?: string;
+  roles?: string[];
 }
 
 export interface ILoginCreds {

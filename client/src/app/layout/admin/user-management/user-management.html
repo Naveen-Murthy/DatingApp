@@ -1,0 +1,42 @@
+<div class="h-[75vh] overflow-auto rounded-box border border-base-content/5 bg-base-100">
+  <table class="table table-zebra w-full table-pin-rows">
+    <thead>
+      <tr>
+        <th>Email</th>
+        <th>Active Roles</th>
+        <th>Roles</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (user of users(); track user.id) {
+        <tr>
+          <td>{{ user.email }}</td>
+          <td>{{ user.roles }}</td>
+          <td><button class="btn btn-primary" (click)="openModal(user)">Edit Roles</button></td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+<app-modal [(isOpen)]="isRolesModalOpen" title="Update Roles for {{ selectedUser?.email }}">
+  <fieldset class="fieldset w-full p-4 bg-base-100 border border-base-300 rounded-box">
+    <legend class="fieldset-legend">Select Roles</legend>
+    @for (role of availableRoles; track $index) {
+      <label class="fieldset-label">
+        <input
+          class="checkbox"
+          type="checkbox"
+          [value]="role"
+          [checked]="selectedUser?.roles?.includes(role)"
+          [disabled]="selectedUser?.email === 'admin@test.com' && role === 'Admin'"
+          (change)="toogleRole($event, role)"
+        />
+        {{ role }}
+      </label>
+    }
+  </fieldset>
+  <div class="flex justify-end mt-3">
+    <button class="btn btn-primary" (click)="updateRoles()">Update Roles</button>
+  </div>
+</app-modal>

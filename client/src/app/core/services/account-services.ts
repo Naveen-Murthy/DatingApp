@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { IRegisterCreds, IUser } from '../../types/user';
+import { ILoginCreds, IRegisterCreds, IUser } from '../../types/user';
 import { tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { LikesService } from './likes-service';
@@ -15,33 +15,72 @@ export class AccountServices {
   private baseUrl = environment.apiUrl;
 
   register(creds: IRegisterCreds) {
-    return this.http.post<IUser>(this.baseUrl + 'account/register', creds).pipe(
-      tap((user) => {
-        this.setCurrentUser(user);
-      }),
+    return this.http
+      .post<IUser>(this.baseUrl + 'account/register', creds, { withCredentials: true })
+      .pipe(
+        tap((user) => {
+          this.setCurrentUser(user);
+          this.startTokenRefreshInterval();
+        }),
+      );
+  }
+
+  login(creds: ILoginCreds) {
+    return this.http
+      .post<IUser>(this.baseUrl + 'account/login', creds, { withCredentials: true })
+      .pipe(
+        tap((user) => {
+          if (user) {
+            this.setCurrentUser(user);
+            this.startTokenRefreshInterval();
+          }
+        }),
+      );
+  }
+
+  refreshToken() {
+    return this.http.post<IUser>(
+      this.baseUrl + 'account/refresh-token',
+      {},
+      { withCredentials: true },
     );
   }
 
-  login(creds: any) {
-    return this.http.post<IUser>(this.baseUrl + 'account/login', creds).pipe(
-      tap((user) => {
-        if (user) {
-          this.setCurrentUser(user);
-        }
-      }),
+  startTokenRefreshInterval() {
+    setInterval(
+      () => {
+        this.http
+          .post<IUser>(this.baseUrl + 'account/refresh-token', {}, { withCredentials: true })
+          .subscribe({
+            next: (user) => {
+              this.setCurrentUser(user);
+            },
+            error: () => {
+              this.logout();
+            },
+          });
+      },
+      5 * 60 * 1000,
     );
   }
 
   setCurrentUser(user: IUser) {
-    localStorage.setItem('user', JSON.stringify(user));
+    user.roles = this.getRolesFromToken(user);
     this.currentUser.set(user);
     this.likesService.getLikesIds();
   }
 
   logout() {
-    localStorage.removeItem('user');
     localStorage.removeItem('filters');
     this.currentUser.set(null);
     this.likesService.clearLikeIds();
+  }
+
+  private getRolesFromToken(user: IUser): string[] {
+    const payload = user.token.split('.')[1];
+    const decode = atob(payload);
+    const jsonPayload = JSON.parse(decode);
+    const roles = jsonPayload['role'];
+    return Array.isArray(roles) ? roles : [roles];
   }
 }

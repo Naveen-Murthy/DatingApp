@@ -12,6 +12,8 @@ import { MemberPhotos } from './layout/member/member-photos/member-photos';
 import { MemberMessages } from './layout/member/member-messages/member-messages';
 import { memberResolver } from './layout/member/member-resolver';
 import { profileUnsavedChangesGuardGuard } from './core/guards/profile-unsaved-changes-guard-guard';
+import { Admin } from './pages/admin/admin';
+import { adminGuard } from './core/guards/admin-guard';
 
 export const routes: Routes = [
   { path: '', component: Home },
@@ -40,6 +42,7 @@ export const routes: Routes = [
       },
       { path: 'lists', component: Lists },
       { path: 'messages', component: Messages },
+      { path: 'admin', component: Admin, canActivate: [adminGuard] },
     ],
   },
   { path: 'server-error', component: ServerError },

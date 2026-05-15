@@ -1,4 +1,6 @@
 using System;
+using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -27,5 +29,12 @@ public class BuggyController : BaseApiController
     public IActionResult GetBadRequest()
     {
         return BadRequest("This is a bad request");
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet("admin-secret")]
+    public IActionResult GetSecretAdmin()
+    {
+        return Ok("This is a secret message for Admins only");
     }
 }
