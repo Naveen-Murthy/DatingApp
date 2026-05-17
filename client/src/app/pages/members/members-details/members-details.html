@@ -11,8 +11,11 @@
       />
       <div class="card-body">
         <div class="flex flex-col items-center">
-          <div class="flex text-2xl text-primary">
+          <div class="flex text-2xl text-primary items-center">
             {{ member.displayName }}, {{ member.dateofBirth | age }}
+            @if (presenceService.onlineUsers().includes(member.id)) {
+              <span class="status status-success status-xl ml-3" title="Online"></span>
+            }
           </div>
           <p class="text-sm">{{ member.city }}, {{ member.country }}</p>
         </div>

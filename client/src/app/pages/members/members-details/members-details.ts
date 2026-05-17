@@ -12,6 +12,7 @@ import { Member } from '../../../types/member';
 import { AgePipe } from '../../../core/pipes/age-pipe';
 import { AccountServices } from '../../../core/services/account-services';
 import { MemberService } from '../../../core/services/member-service';
+import { PresenceService } from '../../../core/services/presence-service';
 
 @Component({
   selector: 'app-members-details',
@@ -28,6 +29,7 @@ export class MembersDetails implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private accountServices = inject(AccountServices);
+  protected presenceService = inject(PresenceService);
   //Before using resolver
   // protected member$?: Observable<Member>;
   //After using resolver

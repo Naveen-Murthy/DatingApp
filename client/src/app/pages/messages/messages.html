@@ -50,7 +50,9 @@
             <div class="flex items-center gap-3">
               <div class="h-12 w-12">
                 <img
-                  [src]="isInbox ? message.senderImageUrl : message.recipientImageUrl"
+                  [src]="
+                    (isInbox ? message.senderImageUrl : message.recipientImageUrl) || '/user.png'
+                  "
                   alt="Profile Picture"
                   class="rounded-full object-cover"
                 />
